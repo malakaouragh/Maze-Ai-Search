@@ -265,14 +265,7 @@ def move_robot():
     direction = data.get('direction')  # 'left', 'right', 'up', 'down'
     
     maze = create_maze()
-    neighbors = [n for n, _ in maze.get_neighbors(current_position)]
-    
- 
-    if not neighbors:
-        return jsonify({"error": "No possible moves from current position"}), 400
-    
-     new_position = neighbors[0]
-    
+  
     return jsonify({"new_position": new_position})
 
 @app.route('/templates/index.html')
@@ -797,9 +790,10 @@ if __name__ == '__main__':
     if not os.path.exists('templates'):
         os.makedirs('templates')
     
+# Create template file if it doesn't exist
 template_path = os.path.join('templates', 'index.html')
 if not os.path.exists(template_path):
-    with open(template_path, 'w', encoding='utf-8') as f: 
+    with open(template_path, 'w', encoding='utf-8') as f:  # Specify UTF-8 encoding
         f.write(get_index_template())  
 
 app.run(debug=True)
