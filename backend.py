@@ -782,16 +782,17 @@ def get_index_template():
 @app.route('/templates/<path:filename>')
 def serve_template(filename):
     return get_index_template()
-
 if __name__ == '__main__':
     # Make sure templates directory exists
     if not os.path.exists('templates'):
         os.makedirs('templates')
     
-# Create template file if it doesn't exist
-template_path = os.path.join('templates', 'index.html')
-if not os.path.exists(template_path):
-    with open(template_path, 'w', encoding='utf-8') as f:  # Specify UTF-8 encoding
-        f.write(get_index_template())  
+    # Create template file if it doesn't exist
+    template_path = os.path.join('templates', 'index.html')
+    if not os.path.exists(template_path):
+        with open(template_path, 'w', encoding='utf-8') as f:
+            f.write(get_index_template())  
 
-app.run(debug=True)
+    # Get port from environment variable for deployment platforms like Render
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
