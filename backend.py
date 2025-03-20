@@ -15,7 +15,6 @@ class MazeGraph:
         self.heuristic = {}
         
     def add_edge(self, u, v, weight=1):
-        """Add bidirectional edge between nodes u and v"""
         if u not in self.graph:
             self.graph[u] = []
         if v not in self.graph:
@@ -25,15 +24,12 @@ class MazeGraph:
         self.graph[v].append((u, weight))
     
     def set_heuristic(self, state, value):
-        """Set the heuristic value for a given state"""
         self.heuristic[state] = value
         
     def get_neighbors(self, node):
-        """Get all neighbors of a node"""
         return self.graph.get(node, [])
     
     def breadth_first_search(self, start, goal):
-        """Implement BFS algorithm"""
         if start == goal:
             return [start], [start]
             
@@ -63,7 +59,6 @@ class MazeGraph:
                         solution_path.reverse()
                         return explored_path, solution_path
         
-        # If no path is found
         return explored_path, []
     
     def depth_first_search(self, start, goal):
@@ -71,7 +66,6 @@ class MazeGraph:
         if start == goal:
             return [start], [start]
         
-        # Initialize visited set, stack, and parent dictionary
         visited = set()
         stack = [(start, None)]  # (node, parent)
         parent = {}
@@ -86,7 +80,6 @@ class MazeGraph:
                 parent[node] = node_parent
                 
                 if node == goal:
-                    # Reconstruct solution path
                     solution_path = []
                     current = node
                     while current is not None:
@@ -95,13 +88,11 @@ class MazeGraph:
                     solution_path.reverse()
                     return explored_path, solution_path
                 
-                # Add neighbors to stack in reverse order (to match typical DFS behavior)
                 neighbors = self.get_neighbors(node)
                 for neighbor, _ in reversed(neighbors):
                     if neighbor not in visited:
                         stack.append((neighbor, node))
         
-        # If no path is found
         return explored_path, []
     
     def a_star_search(self, start, goal):
@@ -109,7 +100,6 @@ class MazeGraph:
         if start == goal:
             return [start], [start]
         
-        # Initialize open and closed sets
         open_set = [(self.heuristic[start], 0, start, None)]  # (f, g, node, parent)
         heapq.heapify(open_set)
         closed_set = set()
@@ -128,7 +118,6 @@ class MazeGraph:
             closed_set.add(node)
             
             if node == goal:
-                # Reconstruct solution path
                 solution_path = []
                 current = node
                 while current is not None:
@@ -148,14 +137,11 @@ class MazeGraph:
                     f = tentative_g + self.heuristic.get(neighbor, 0)
                     heapq.heappush(open_set, (f, tentative_g, neighbor, node))
         
-        # If no path is found
         return explored_path, []
 
 def create_maze():
     maze = MazeGraph()
-    
-    # Define connections based on the maze layout in the image
-    # Each cell is connected to its accessible neighbors
+   
     edges = [
         # Row 1 connections
         ('A', '1'),
@@ -184,8 +170,6 @@ def create_maze():
     for u, v in edges:
         maze.add_edge(u, v)
     
-    # Define heuristics (estimated distance to goal 'B')
-    # These are approximations based on the grid layout
     heuristics = {
         'A': 8, '1': 6, '2': 6, '3': 6, '4': 7,
         '5': 4, '6': 12, '7': 7, '8': 15, '9': 18,
@@ -226,8 +210,6 @@ def get_maze_layout():
         'B': {'row': 1, 'col': 12}
     }
     
-    # Define walls to block movement between cells
-    # Each wall is defined by two cells that cannot be traversed between
     walls = [
     
     ]
@@ -248,7 +230,6 @@ def get_maze():
 def solve_maze():
     data = request.json
     
-    # Extract parameters
     algorithm = data.get('algorithm', 'bfs')
     start = data.get('start', 'A')
     goal = data.get('goal', 'B')
@@ -256,7 +237,6 @@ def solve_maze():
     # Create maze
     maze = create_maze()
     
-    # Run the selected algorithm
     if algorithm == 'bfs':
         explored_path, solution_path = maze.breadth_first_search(start, goal)
         algorithm_name = "Breadth-First Search"
@@ -269,7 +249,6 @@ def solve_maze():
     else:
         return jsonify({"error": "Invalid algorithm specified"}), 400
     
-    # Prepare response
     response = {
         "algorithm": algorithm_name,
         "explored_path": explored_path,
@@ -285,19 +264,14 @@ def move_robot():
     current_position = data.get('position')
     direction = data.get('direction')  # 'left', 'right', 'up', 'down'
     
-    # Get maze structure
     maze = create_maze()
     neighbors = [n for n, _ in maze.get_neighbors(current_position)]
     
-    # Simple movement logic
-    # In a real implementation, you would need more sophisticated navigation
-    # based on the actual layout coordinates
+ 
     if not neighbors:
         return jsonify({"error": "No possible moves from current position"}), 400
     
-    # For demonstration, just move to the first available neighbor
-    # In a real implementation, you would determine which neighbor corresponds to the chosen direction
-    new_position = neighbors[0]
+     new_position = neighbors[0]
     
     return jsonify({"new_position": new_position})
 
@@ -823,10 +797,9 @@ if __name__ == '__main__':
     if not os.path.exists('templates'):
         os.makedirs('templates')
     
-# Create template file if it doesn't exist
 template_path = os.path.join('templates', 'index.html')
 if not os.path.exists(template_path):
-    with open(template_path, 'w', encoding='utf-8') as f:  # Specify UTF-8 encoding
+    with open(template_path, 'w', encoding='utf-8') as f: 
         f.write(get_index_template())  
 
 app.run(debug=True)
